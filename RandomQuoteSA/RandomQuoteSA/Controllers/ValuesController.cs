@@ -1,28 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System.Collections.Generic;
 using System.Web.Http;
-using System.Web.Mvc;
 using RandomQuoteSA.Models;
 
 namespace RandomQuoteSA.Controllers
 {
     public class ValuesController : ApiController
     {
-        public JsonResult Quote()
-        {
-            var model = new { quote = "Blablablablablabla", author = "Pepe" };
+        //public JsonResult Quote()
+        //{
+        //    var model = new { quote = "Blablablablablabla", author = "Pepe" };
 
-            return new JsonResult() { Data = model, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
-        }
+        //    return new JsonResult() { Data = model, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        //}
 
         // GET api/values
         public Quote Get()
         {
             // return new string[] { "value1", "value2" };
-            var quote = new Quote() {Text= "Blablablablablabla", Author = "Pepe" };
+            var quote = new Quote() { Text = "Blablablablablabla", Author = "Pepe" };
 
             return quote;
         }
@@ -34,8 +29,13 @@ namespace RandomQuoteSA.Controllers
         }
 
         // POST api/values
-        public void Post([FromBody]string value)
+        public Quote Post(List<string> val)
+        //public Quote Post(string quote, string author)
         {
+            var quoteObj = new Quote() { Text = val[0] + " 2!", Author = val[1] + " 2!" };
+
+            //var quoteObj = new Quote() { Text = quote, Author = author };
+            return quoteObj;
         }
 
         // PUT api/values/5

@@ -1,24 +1,124 @@
 ﻿<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    <div class="row">
+        <h1>Get quote from external web api -> MVC Web API</h1>
+        <div class="col-md-6">
+            <h2>Quote :)</h2>
+            <p>Press the button to get a beautiful and random quote</p>
+            <p><a id="buttonQuote" class="btn btn-default">Get Quote!</a></p>
+            <div id="quoteText"></div>
+            <div id="author"></div>
+        </div>
+        <div class="col-md-6">
+            <h2>Quote from Server</h2>
+            <div id="quoteText2"></div>
+            <div id="author2"></div>
+        </div>
+    </div>
+    <div class="row">
+        <h1>Get quote from external web api -> MVC Action</h1>
+        <div class="col-md-6">
+            <h2>Quote :)</h2>
+            <p>Press the button to get a beautiful and random quote</p>
+            <p><a id="buttonQuoteAction" class="btn btn-default">Get Quote!</a></p>
+            <div id="quoteTextAction"></div>
+            <div id="authorAction"></div>
+        </div>
+        <div class="col-md-6">
+            <h2>Quote from Server</h2>
+            <div id="quoteTextAction2"></div>
+            <div id="authorAction2"></div>
+        </div>
+    </div>
 </div>
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
-        a broad range of clients, including browsers and mobile devices. ASP.NET Web API
-        is an ideal platform for building RESTful applications on the .NET Framework.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301871">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
-    </div>
-</div>
+
+<script type="text/javascript">
+    function getQuoteMVCAction() {
+        $.ajax({
+            headers: {
+                "X-Mashape-Key": "hS2nakiehhmshJ9Z8Nwf8o8NisYJp1nMCz7jsnWmjxOGiGkfZn",
+                "Accept": "application/json",
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            url: 'https://andruxnet-random-famous-quotes.p.mashape.com/?cat=famous',
+            success: function (response) {
+                var r = JSON.parse(response);
+                currentQuote = r.quote;
+                currentAuthor = r.author;
+
+                $("#quoteTextAction").html(r.quote);
+                $("#authorAction").html("~ " + r.author);
+
+                $.ajax({
+                    //url: 'http://localhost:6930/api/values',
+                    url: 'http://localhost:6930/Quote/Post',
+                    type: "POST",
+                    datatype: 'json',
+                    contentType: "application/json",
+                    data: JSON.stringify({ quote: r.quote, author: r.author }),
+                    //data: JSON.stringify([r.quote, r.author]),
+                    success: function (response) {
+                        $("#quoteTextAction2").html(response.Text);
+                        $("#authorAction2").html("~ " + response.Author);
+                    },
+                    error: function (jqxhr, textStatus, error) {
+                        $("#quoteTextAction2").html("Request Failed: " + textStatus);
+                        $("#authorAction2").html("~ Random Quote Machine");
+                    }
+                });
+            },
+            error: function (jqxhr, textStatus, error) {
+                $("#quoteTextAction").html("Request Failed: " + textStatus);
+                $("#authorAction").html("~ Random Quote Machine");
+            }
+        });
+    };
+
+    function getQuoteMVCWebAPI() {
+        $.ajax({
+            headers: {
+                "X-Mashape-Key": "hS2nakiehhmshJ9Z8Nwf8o8NisYJp1nMCz7jsnWmjxOGiGkfZn",
+                "Accept": "application/json",
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            url: 'https://andruxnet-random-famous-quotes.p.mashape.com/?cat=famous',
+            success: function (response) {
+                var r = JSON.parse(response);
+                currentQuote = r.quote;
+                currentAuthor = r.author;
+
+                $("#quoteText").html(r.quote);
+                $("#author").html("~ " + r.author);
+
+                $.ajax({
+                    url: 'http://localhost:6930/api/values',
+                    type: "POST",
+                    datatype: 'json',
+                    contentType: "application/json",
+                    data: JSON.stringify([r.quote, r.author]),
+                    success: function (response) {
+                        $("#quoteText2").html(response.Text);
+                        $("#author2").html("~ " + response.Author);
+                    },
+                    error: function (jqxhr, textStatus, error) {
+                        $("#quoteText2").html("Request Failed: " + textStatus);
+                        $("#author2").html("~ Random Quote Machine");
+                    }
+                });
+            },
+            error: function (jqxhr, textStatus, error) {
+                $("#quoteText").html("Request Failed: " + textStatus);
+                $("#author").html("~ Random Quote Machine");
+            }
+        });
+    };
+
+    $(document).ready(function () {
+        $("#buttonQuote").on("click", function () {
+            getQuoteMVCWebAPI();
+        });
+
+        $("#buttonQuoteAction").on("click", function () {
+            getQuoteMVCAction();
+        });
+    });
+</script>
